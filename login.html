@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #ffffff;
+            color: #000000;
+            display: flex;
+            flex-direction: column;
+            padding-left: 20px;
+            border-right: 1px solid rgb(224, 224, 224);
+        }
+        .sidebar h1 {
+            font-size: 22px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar ul li {
+            margin: 15px 0;
+            font-size: 16px;
+        }
+        .sidebar ul li a {
+            color: #000000;
+            text-decoration: none;
+        }
+        .sidebar ul li a:hover {
+            text-decoration: underline;
+        }
+        .main-content {
+            flex: 1;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 7vh;
+            border-bottom: 1px solid rgb(212, 212, 212);
+        }
+        .header h2 {
+            font-size: 24px;
+        }
+        .header .user {
+            font-size: 14px;
+        }
+        .cards {
+            display: grid;
+            height: 93%;
+            width: 100%;
+            background-color: hwb(214 97% 0% / 0.993);
+            contain: content;
+        }
+    </style>
+    <script src="http://127.0.0.1:5500/Unobfuscated_Ewallet.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <h1 style="margin-top: 25px; margin-bottom: 5px;">CLIENT_APP</h1>
+        <ul style="margin-top: 18px; border-top: 1px solid rgb(216, 216, 216);">
+            <li><a href="login.html">Login</a></li>
+            <li><a href="product.html">Products</a></li>
+            <li><a href="dashboard.html">My eWallet (Embedded)</a></li>
+        </ul>   
+    </div>
+    <div class="main-content">
+        <div class="header">
+            <h2>Dashboard</h2>
+            <button 
+                onclick="logoutWallet()"
+                id="logoutButton"
+                style="padding: 10px 20px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;"
+            >
+                Logout Wallet
+            </button>
+        </div>
+        <div class="email-form" style="padding: 20px;">
+            <h3>Initialize eWallet</h3>
+            <div style="margin: 20px 0;">
+                <label for="userEmail" style="display: block; margin-bottom: 8px;">User Email:</label>
+                <input 
+                    type="email" 
+                    id="userEmail" 
+                    placeholder="Enter your email"
+                    style="padding: 8px; width: 300px; border: 1px solid #ddd; border-radius: 4px;"
+                >
+            </div>
+            <button 
+                onclick="initializeWallet()"
+                style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;"
+            >
+                Initialize Wallet
+            </button>
+            <div id="statusMessage" style="margin-top: 10px; color: #28a745;"></div>
+        </div>
+    </div>
+
+    <script>
+        if (typeof Ewallet === 'undefined') {
+            console.error('[Test Page] Ewallet SDK not loaded. Check script path: http://127.0.0.1:5500/Ewallet.js');
+            document.getElementById('statusMessage').style.color = '#dc3545';
+            document.getElementById('statusMessage').textContent = 'SDK not loaded. Check console.';
+        } else {
+            console.log('[Test Page] Ewallet SDK loaded successfully');
+        }
+
+        const wallet = new Ewallet();
+
+        async function initializeWallet() {
+            const userEmail = document.getElementById('userEmail').value;
+            const statusMessage = document.getElementById('statusMessage');
+
+            if (!userEmail) {
+                statusMessage.style.color = '#dc3545';
+                statusMessage.textContent = 'Please enter an email address';
+                console.error('[Test Page] Email input is empty');
+                return;
+            }
+
+            try {
+                console.log('[Test Page] Initializing wallet with email:', userEmail);
+                await wallet.initAuth({
+                    clientName: "earnon",
+                    clientId: "LocalEarnOn",
+                    clientSecret: "HQefo4XlUXKwElOCaLFqlMJMZ8JBgIF48f7SKm",
+                    userEmail: userEmail
+                });
+                statusMessage.style.color = '#28a745';
+                statusMessage.textContent = 'Wallet initialized successfully! Waiting for authentication...';
+                console.log('[Test Page] Wallet initialization successful');
+            } catch (error) {
+                statusMessage.style.color = '#dc3545';
+                statusMessage.textContent = 'Failed to initialize wallet. Check console for details.';
+                console.error('[Test Page] Wallet initialization failed:', error);
+            }
+        }
+
+        function logoutWallet() {
+            try {
+                wallet.logout();
+                document.getElementById('statusMessage').style.color = '#28a745';
+                document.getElementById('statusMessage').textContent = 'Logged out successfully!';
+                document.getElementById('userEmail').value = '';
+                console.log('[Test Page] Logout successful');
+            } catch (error) {
+                document.getElementById('statusMessage').style.color = '#dc3545';
+                document.getElementById('statusMessage').textContent = 'Logout failed. Check console.';
+                console.error('[Test Page] Logout failed:', error);
+            }
+        }
+    </script>
+</body>
+</html>
