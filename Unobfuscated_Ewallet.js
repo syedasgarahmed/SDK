@@ -9,10 +9,10 @@ class Ewallet {
     /**
      * Constructor initializes the SDK with configuration settings.
      * @param {Object} [config={}] - Configuration object.
-     * @param {string} [config.baseUrl="https://dev-ewallet.bizionictech.com"] - Base URL for the eWallet API.
+     * @param {string} [config.baseUrl="http://localhost:4200"] - Base URL for the eWallet API.
      */
     constructor(config = {}) {
-        this.baseUrl = config.baseUrl || "https://app.earnon.ai"
+        this.baseUrl = config.baseUrl || "http://localhost:4200"
         this.paymentResponse = null;
         this.isVideoLoaded = false;
 
